@@ -1,0 +1,37 @@
+name: 'Wiz CLI IaC Scan' 
+
+on: 
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+
+  wiz-cli-iac-scan:
+  
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Download Wiz CLI
+      run: |
+        curl -o wizcli https://wizcli.app.wiz.io/latest/wizcli 
+        chmod +x wizcli
+
+    - name: Configure Wiz CLI
+      env:
+        WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}  
+        WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
+      run: |
+        ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
+
+    - name: Run IaC scan
+      env:
+        SCAN_PATH: "."
+        POLICY: "Default IaC policy"  
+      run: |
+        ./wizcli iac scan --path $SCAN_PATH --policy "$POLICY"
