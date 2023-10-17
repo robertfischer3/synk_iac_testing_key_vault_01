@@ -1,4 +1,4 @@
-name: checkov
+name: 'Checkov IaC Scanning'
 
 # Controls when the workflow will run
 on:
